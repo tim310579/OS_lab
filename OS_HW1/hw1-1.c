@@ -91,15 +91,15 @@ int main(void)
 			execvp("ps", argvps);
 			//system("ps");
 		}
-		else if(!strncmp(arg[buf_size], "exit", 4)){
+		//else if(!strncmp(arg[buf_size], "exit", 4)){
 			
 			int y = getppid();
-			char uu[5];
-			sprintf(uu, "%d", y);
-			char *cha[] = {"kill", uu, NULL};
-			execvp("kill", cha);
+		//	char uu[5];
+		//	sprintf(uu, "%d", y);
+		//	char *cha[] = {"kill", uu, NULL};
+		//	execvp("kill", cha);
 			
-		}
+		//}
 		//wait(NULL);
 	   	exit (0);	
 		
