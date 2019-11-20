@@ -1,0 +1,3 @@
+g++ -Wall -o 0616027_ST 0616027_ST.cpp
+
+time ./0616027_ST <input1.txt> output1_ST.txt
