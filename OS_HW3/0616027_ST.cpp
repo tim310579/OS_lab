@@ -3,7 +3,7 @@
 #define LARGE 1000000
 using namespace std;
 
-int list[LARGE];
+//int list[LARGE];
 int cnt = 0;
 /* function definitions */
 void sort(int list[]);
@@ -12,12 +12,16 @@ int main (int argc, const char * argv[])
 {
 	/* Use STDIN (e.g. scanf, cin) to take the input */
 	int input = 0;
-	//int list[LARGE] = {0};
+	int list_tmp[LARGE] = {0};
+	
 	while(cin >> input){
-		list[cnt] = input;
+		list_tmp[cnt] = input;
 		cnt ++;
 	}
-	
+	int list[cnt] = {0};
+	for(int i = 0; i < cnt; i++){
+		list[i] = list_tmp[i];
+	}
 	sort(list);
 	
 	for(int i = 0; i < cnt; i++){
