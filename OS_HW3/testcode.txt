@@ -16,3 +16,16 @@ time ./0616027_ST < testdata.txt > o1.txt
 
 time ./0616027_MT < testdata.txt > o2.txt
 
+g++ -Wall -o valid valid.cpp
+
+./valid < output1_ST.txt
+
+./valid < output2_ST.txt
+
+./valid < output1_MT.txt
+
+./valid < output2_MT.txt
+
+time ./valid < o1.txt
+
+time ./valid < o2.txt

@@ -4,11 +4,9 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <climits>
-#include <vector>
-#include <algorithm>
 #include <cstring>
 
-#define LARGE 1000000
+#define LARGE 1000001
 
 using namespace std;
 /* function definitions */
@@ -22,7 +20,7 @@ struct merges{
 	//int list2[LARGE/2];
 };
 struct lists{
-	int list[LARGE/4+1];
+	int *list;
 	int cnt;
 };
 
@@ -38,7 +36,7 @@ int main (void)
 	pthread_t t0, t1, t2, t3, t4, t5, t6;
 	/* Use STDIN (e.g. scanf, cin) to take the input */
 	int input = 0;
-	int list[LARGE];
+	int *list = new int[LARGE];
 	int count[4] = {0};
 	int cnt = 0;
 	
@@ -54,6 +52,11 @@ int main (void)
 	lwc1.cnt = count[1];
 	lwc2.cnt = count[2];
 	lwc3.cnt = count[3];
+	
+	lwc0.list = new int[cnt];
+	lwc1.list = new int[cnt];
+	lwc2.list = new int[cnt];
+	lwc3.list = new int[cnt];
 	//count[0] = cnt/4;		//each list size
 	//cnt1 = cnt/2 - cnt0;
 	//cnt2 = cnt*3/4 - cnt/2;
@@ -81,67 +84,61 @@ int main (void)
 	pthread_join(t1, &ret1);
 	pthread_join(t2, &ret2);
 	pthread_join(t3, &ret3);
-	int *list0 = (int *) ret0;
-	int *list1 = (int *) ret1;
-	int *list2 = (int *) ret2;
-	int *list3 = (int *) ret3;
-	
+
+	delete [] list;	//release space
 	mwc1.cnt1 = count[0];
 	mwc1.cnt2 = count[1];
 	mwc2.cnt1 = count[2];
 	mwc2.cnt2 = count[3];
-	//mwc1.list = (int*)malloc(LARGE* sizeof(int));
-	//mwc2.list = (int*)malloc(LARGE* sizeof(int));
 	
 	mwc1.list = new int*[2];	//2-D array with count
-	mwc1.list[0] = new int[LARGE];
-	mwc1.list[1] = new int[LARGE];
+	mwc1.list[0] = new int[cnt];
+	mwc1.list[1] = new int[cnt];
 	mwc2.list = new int*[2];
-	mwc2.list[0] = new int[LARGE];
-	mwc2.list[1] = new int[LARGE];
-	for(int i = 0; i < count[0]; i++){
-		mwc1.list[0][i] = list0[i];
-	}
-	for(int i = 0; i < count[1]; i++){
-		mwc1.list[1][i] = list1[i];
-	}
-	for(int i = 0; i < count[2]; i++){
-		mwc2.list[0][i] = list2[i];
-	}
-	for(int i = 0; i < count[3]; i++){
-		mwc2.list[1][i] = list3[i];
-	}	
+	mwc2.list[0] = new int[cnt];
+	mwc2.list[1] = new int[cnt];
 	
+	mwc1.list[0] = (int *) ret0;
+	mwc1.list[1] = (int *) ret1;
+	mwc2.list[0] = (int *) ret2;
+	mwc2.list[1] = (int *) ret3;
+
 	pthread_create(&t4, NULL, merge, (void *) &mwc1);
 	pthread_create(&t5, NULL, merge, (void *) &mwc2);
     	
 	pthread_join(t4, &ret4);
 	pthread_join(t5, &ret5);
-	int *list_merge1 = (int *) ret4;
-	int *list_merge2 = (int *) ret5;
+	delete [] mwc1.list[0];
+	delete [] mwc1.list[1];
+	delete [] mwc1.list;
+	delete [] mwc2.list[0];
+	delete [] mwc2.list[1];
+	delete [] mwc2.list;
+
 	int half1 = count[0] + count[1];
 	int half2 = count[2] + count[3];
 
 	mwc3.cnt1 = half1;
 	mwc3.cnt2 = half2;
-	mwc3.list = new int*[2];
-	mwc3.list[0] = new int[LARGE];
-	mwc3.list[1] = new int[LARGE];
 	
-	for(int i = 0; i < half1; i++){
-		mwc3.list[0][i] = list_merge1[i];
-	}
-	for(int i = 0; i < half2; i++){
-		mwc3.list[1][i] = list_merge2[i];
-	}
+	mwc3.list = new int*[2];
+	mwc3.list[0] = new int[cnt];
+	mwc3.list[1] = new int[cnt];
+	
+	mwc3.list[0] = (int *) ret4;
+	mwc3.list[1] = (int *) ret5;
 	
 	pthread_create(&t6, NULL, merge, (void *) &mwc3);
 	pthread_join(t6, &ret6);
-	int *list_final = (int *) ret6;
+	delete [] mwc3.list[0];
+	delete [] mwc3.list[1];
+	delete [] mwc3.list;
+	int *list_final = new int[cnt];
+	list_final = (int *) ret6;
 	for(int i = 0; i < cnt; i++){
 		cout << list_final[i] <<" ";
 	}
-	
+	delete [] list_final;
 	return 0;
 }
 
@@ -149,7 +146,8 @@ void* sort(void *arg)
 {
 	struct lists lwc = *(lists *) arg;
 	int cntt = lwc.cnt;
-	int *list = lwc.list;
+	int *list = new int[cntt];
+	list = lwc.list;
 
 	for(int i = 0; i < cntt; i++){
 		for(int j = i+1; j < cntt; j++){
@@ -171,28 +169,23 @@ void* merge(void *arg){
 	struct merges mwc = *(merges *) arg;
 	int cnt1 = mwc.cnt1;
 	int cnt2 = mwc.cnt2;
-	int **list = mwc.list;
-	int list1[cnt1+1] = {0};
-	int list2[cnt2+1] = {0};
-	int ret_list[cnt1+cnt2] = {0};
-	for(int i = 0; i < cnt1; i++){
-		list1[i] = list[0][i];
-	}
-	for(int i = 0; i < cnt2; i++){
-		list2[i] = list[1][i];
-	}
-	list1[cnt1] = INT_MAX;
-	list2[cnt2] = INT_MAX;
+	int **list = new int*[2];
+	list[0] = new int[cnt1];	//first array
+	list[1] = new int[cnt2];	//second array
+	list = mwc.list;
+	list[0][cnt1] = INT_MAX;
+	list[1][cnt2] = INT_MAX;
+	int *ret_list = new int[cnt1+cnt2];
 	
 	int i = 0, j = 0, check = 0;
 	while(1){
-		if(list1[i] < list2[j]){
-			ret_list[check] = list1[i];
+		if(list[0][i] < list[1][j]){
+			ret_list[check] = list[0][i];
 			i++;
 			check++;
 		}
-		else if(list1[i] >= list2[j]){
-			ret_list[check] = list2[j];
+		else if(list[0][i] >= list[1][j]){
+			ret_list[check] = list[1][j];
 			j++;
 			check++;
 		}

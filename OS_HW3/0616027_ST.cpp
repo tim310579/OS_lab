@@ -1,6 +1,6 @@
 #include <iostream> 
 #include <stdlib.h>
-#define LARGE 1000000
+#define LARGE 1000001
 using namespace std;
 
 //int list[LARGE];
@@ -12,21 +12,19 @@ int main (int argc, const char * argv[])
 {
 	/* Use STDIN (e.g. scanf, cin) to take the input */
 	int input = 0;
-	int list_tmp[LARGE] = {0};
+	int *list_tmp = new int[LARGE];
 	
 	while(cin >> input){
 		list_tmp[cnt] = input;
 		cnt ++;
 	}
-	int list[cnt] = {0};
-	for(int i = 0; i < cnt; i++){
-		list[i] = list_tmp[i];
-	}
-	sort(list);
+	
+	sort(list_tmp);
 	
 	for(int i = 0; i < cnt; i++){
-		cout << list[i] <<" ";
+		cout << list_tmp[i] <<" ";
 	}	
+	delete [] list_tmp;
     return 0;
 }
 
