@@ -1,0 +1,9 @@
+ python generate.py > testdata.txt	//generate testdata
+
+ g++ -Wall -o hw4_Series hw4_Series.c -lpthread		//compile
+
+ time ./hw4_Series < testdata.txt		//the result
+
+ python valid.py < testdata.txt		//valid the answer
+
+ g++ -Wall -o hw4_Pi hw4_Pi.c -lpthread
