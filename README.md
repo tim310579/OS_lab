@@ -5,4 +5,6 @@
 
 2. 計算CPU排程的wait time, turaround time，分別使用不同方法，像是CFCS, Round rubin之類的
 
-3. 
+3. 用single thread 和 multi thread 分別實作 bubble sort 的演算法，並比較時間
+
+4. 使用多條thread，並使用到 mutex lock 防止目標值出錯
