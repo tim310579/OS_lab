@@ -1,9 +1,17 @@
- python generate.py > testdata.txt	//generate testdata
+ python generate.py > t1_2.txt	//generate testdata
 
  g++ -Wall -o hw4_Series hw4_Series.c -lpthread		//compile
 
- time ./hw4_Series < testdata.txt		//the result
+ time ./hw4_Series < t1_2.txt		//the result of 2 threads
 
- python valid.py < testdata.txt		//valid the answer
+ time ./hw4_Series < t1_4.txt		//the result of 4 threads
+
+ python valid.py < t1_2.txt		//valid the answer
 
  g++ -Wall -o hw4_Pi hw4_Pi.c -lpthread
+
+ time ./hw4_Pi < t2_1.txt	//1 thread
+
+ time ./hw4_Pi < t2_2.txt	//2 thread
+
+ time ./hw4_Pi < t2_4.txt	//4 thread

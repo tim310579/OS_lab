@@ -8,16 +8,18 @@
 
 pthread_mutex_t lock;
 void* Pi_cnt(void *arg);
-long long incircle; 
+long long incircle[4]; 
 struct thrown{
 	int t_num;
 	long long length;
 };
 int main() 
 {
-	incircle = 0;
    	long long i;
-   	srand(time(NULL)); 
+	for(i = 0; i < 4; i++){
+		incircle[i] = 0;
+	}	
+	srand(time(NULL)); 
    	long long num, length;
 	printf("0616027\n");
 	scanf("%lld", &num);
@@ -38,15 +40,13 @@ int main()
 	for(i = 0; i < num; i++){
 		pthread_join(t[i], &ret[i]);
 	}
-	long long ans[num] = {0};
+	long long all_in = 0;
 	for(i = 0; i < num; i++){
-		ans[i] = (long long) ret[i];
-	}
-	for(i = 0; i < num; i++){
-		printf("Thread %lld, There are %lld points in the circle\n", i, ans[i]); 
+		printf("Thread %lld, There are %lld points in the circle\n", i, incircle[i]); 
+		all_in += incircle[i];
 	}
     	double pi = 0;
-    	pi = (double)(4*incircle)/(length); 
+    	pi = (double)(4*all_in)/(length); 
     // Final Estimated Value 
     //printf("%lld %lld", circle_points, square_points);
     	printf("Pi : %lf\n", pi); 
@@ -55,21 +55,20 @@ int main()
 } 
 void* Pi_cnt(void *arg){
 	thrown* tmp = (thrown*) arg;
-	//int t_num = tmp->t_num;
+	int t_num = tmp->t_num;
 	long long cnt = tmp->length;
-	long long circle_points = 0, square_points = 0, i = 0;
+	long long circle_points = 0, i = 0;
 	double rand_x, rand_y, origin_dist; 
 	for (i = 0; i < cnt; i++) {  
         // Randomly generated x and y values 
         	rand_x = (double)rand()/ (RAND_MAX); 
 	        rand_y = (double)rand()/ (RAND_MAX); 
-        	origin_dist = sqrt(rand_x * rand_x + rand_y * rand_y); 
+        	origin_dist = rand_x * rand_x + rand_y * rand_y; 
 	        if (origin_dist <= 1) circle_points++; 
-        	square_points++;  
     	}
-    pthread_mutex_lock(&lock);
+    	pthread_mutex_lock(&lock);
    	//printf("Thread %d, There are %lld points in the circle\n", t_num, circle_points); 
-   	incircle += circle_points;
+   	incircle[t_num] += circle_points;
    	pthread_mutex_unlock(&lock);
-	pthread_exit((void *)circle_points);
+	pthread_exit(NULL);
 }

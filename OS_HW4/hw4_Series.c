@@ -5,7 +5,7 @@
 #include <string.h>
 
 long long ans[10];
-pthread_mutex_t lock;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 struct ser{
 	char* series;
 	long long cnt;
@@ -57,6 +57,7 @@ void* count_num(void *arg){
 	series = tmp->series;
 	long long i;
 	long long ans_tmp[10] = {0};
+	//pthread_mutex_lock(&lock);
 	for(i = 0; i < cnt; i++){
 		switch(series[i]){
 			case '0': ans_tmp[0] ++; break;
@@ -72,6 +73,7 @@ void* count_num(void *arg){
 			default: break;
 		}
 	}
+	
 	pthread_mutex_lock(&lock);
 	for(i = 0; i < 10; i++){
 		ans[i] += ans_tmp[i];
