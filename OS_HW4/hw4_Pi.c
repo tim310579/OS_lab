@@ -6,7 +6,7 @@
 // Defines precision for x and y values. More the 
 // interval, more the number of significant digits 
 
-pthread_mutex_t lock;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 void* Pi_cnt(void *arg);
 long long incircle[4]; 
 struct thrown{
@@ -66,7 +66,7 @@ void* Pi_cnt(void *arg){
         	origin_dist = rand_x * rand_x + rand_y * rand_y; 
 	        if (origin_dist <= 1) circle_points++; 
     	}
-    	pthread_mutex_lock(&lock);
+   	pthread_mutex_lock(&lock);
    	//printf("Thread %d, There are %lld points in the circle\n", t_num, circle_points); 
    	incircle[t_num] += circle_points;
    	pthread_mutex_unlock(&lock);
